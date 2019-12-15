@@ -54,3 +54,11 @@ test('can move forward in any directions', () => {
   robot.execute([Forward]);
   expect(robot.currentPosition).toEqual('1 1 E');
 });
+
+test('can follow a sequence of instructions', () => {
+  const landAt: Position = { x: 1, y: 1, orientation: 'N' };
+  const robot = new Robot(grid([0, 0], [5, 5]), landAt);
+
+  robot.execute([Forward, Left, Forward, Left, Forward, Left, Forward]);
+  expect(robot.currentPosition).toEqual('1 1 E');
+});
