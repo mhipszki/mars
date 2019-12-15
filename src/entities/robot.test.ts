@@ -6,15 +6,15 @@ const grid = ([x0, y0]: number[], [x1, y1]: number[]): Grid => ({
   upperRight: { x: x1, y: y1 },
 });
 
+const landAt = (x, y, orientation): Position => ({ x, y, orientation });
+
 test('has current position when created with grid and landing position', () => {
-  const landAt: Position = { x: 1, y: 1, orientation: 'N' };
-  const robot = new Robot(grid([0, 0], [5, 5]), landAt);
+  const robot = new Robot(grid([0, 0], [5, 5]), landAt(1, 1, 'N'));
   expect(robot.currentPosition).toEqual('1 1 N');
 });
 
 test('can change orientation', () => {
-  const landAt: Position = { x: 1, y: 1, orientation: 'N' };
-  const robot = new Robot(grid([0, 0], [5, 5]), landAt);
+  const robot = new Robot(grid([0, 0], [5, 5]), landAt(1, 1, 'N'));
 
   robot.execute([Left]);
   expect(robot.currentPosition).toEqual('1 1 W');
@@ -36,8 +36,7 @@ test('can change orientation', () => {
 });
 
 test('can move forward in any directions', () => {
-  const landAt: Position = { x: 1, y: 1, orientation: 'N' };
-  const robot = new Robot(grid([0, 0], [5, 5]), landAt);
+  const robot = new Robot(grid([0, 0], [5, 5]), landAt(1, 1, 'N'));
 
   robot.execute([Forward]);
   expect(robot.currentPosition).toEqual('1 2 N');
@@ -56,8 +55,7 @@ test('can move forward in any directions', () => {
 });
 
 test('can follow a sequence of instructions', () => {
-  const landAt: Position = { x: 1, y: 1, orientation: 'N' };
-  const robot = new Robot(grid([0, 0], [5, 5]), landAt);
+  const robot = new Robot(grid([0, 0], [5, 5]), landAt(1, 1, 'N'));
 
   robot.execute([Forward, Left, Forward, Left, Forward, Left, Forward]);
   expect(robot.currentPosition).toEqual('1 1 E');
