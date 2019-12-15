@@ -16,7 +16,7 @@ class Robot {
     this.instructions = instructions;
 
     while (this.instructions.length > 0) {
-      const nextInstruction = this.instructions.shift();
+      const nextInstruction = this.instructions.shift() as Instruction;
       const updatedPosition = this.getUpdatedPosition(
         nextInstruction,
         this.position

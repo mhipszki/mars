@@ -94,4 +94,6 @@ export const createExecutor = (grid: Grid): CommandExecutor => (
   if (instruction === Forward) {
     return moveForwardFrom(position, grid);
   }
+
+  return position;
 };
