@@ -8,6 +8,22 @@ test('extracts grid dimensions from input', () => {
   });
 });
 
+test('throws if input length exceeds 100', () => {
+  expect(() => process('A'.repeat(101))).toThrow(
+    'Input length exceeds limit: 100'
+  );
+});
+
+test('throws if any coordinate value exceeds 50', () => {
+  expect(() => process('51 3')).toThrow('Coordinate value exceeds limit: 50');
+  expect(() =>
+    process(`
+5 5
+51 3 N
+`)
+  ).toThrow('Coordinate value exceeds limit: 50');
+});
+
 test('extracts robot instructions from input', () => {
   expect(process(input)).toMatchObject({
     robotInstructions: [
