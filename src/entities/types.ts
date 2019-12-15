@@ -27,6 +27,16 @@ export const Left = 'L';
 export const Right = 'R';
 export const Forward = 'F';
 
-const instructions = [Left, Right, Forward] as const;
+export const instructions = [Left, Right, Forward] as const;
 
 export type Instruction = typeof instructions[number];
+
+export interface RobotInstruction {
+  landAt: Position;
+  instructionSet: Instruction[];
+}
+
+export interface ConfigurationSet {
+  upperRight: Coordinate;
+  robotInstructions: RobotInstruction[];
+}
