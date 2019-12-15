@@ -12,11 +12,9 @@ class Robot {
     this.getUpdatedPosition = commandExecutor;
   }
 
-  // processes instructions and moves robot
-  // skips 'Forward' instructions in ignored positions to avoid falling off the grid
-  // stops execution and marks position when robot moves "off" the grid
-  execute(instructions: Instruction[]): Robot {
+  process(instructions: Instruction[]) {
     this.instructions = instructions;
+
     while (this.instructions.length > 0) {
       const nextInstruction = this.instructions.shift();
       const updatedPosition = this.getUpdatedPosition(
@@ -25,10 +23,21 @@ class Robot {
       );
       if (updatedPosition.isOffGrid) {
         this.isOffGrid = true;
+        break;
       } else {
         this.position = updatedPosition;
       }
     }
+  }
+
+  // processes instructions and moves robot
+  execute(instructions: Instruction[]): Robot {
+    if (this.isLost) {
+      return this;
+    }
+
+    this.process(instructions);
+
     return this;
   }
 

@@ -95,3 +95,20 @@ test('marks and reports the position where it fell "off" the grid', () => {
   expect(robot.isLost).toBe(true);
   expect(robot.currentPosition).toEqual('0 1 W LOST');
 });
+
+test('will not execute more instructions once fallen "off" the grid', () => {
+  const grid = createGrid([0, 0], [5, 5]);
+  const robot = new Robot(landAt(1, 1, 'W'), commandExecutor(grid));
+
+  robot.execute([Forward, Forward, Right, Forward]);
+
+  expect(robot.currentPosition).toEqual('0 1 W LOST');
+
+  robot.execute([Left]);
+
+  expect(robot.currentPosition).toEqual('0 1 W LOST');
+
+  robot.execute([Forward]);
+
+  expect(robot.currentPosition).toEqual('0 1 W LOST');
+});
