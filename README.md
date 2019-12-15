@@ -29,3 +29,112 @@ orientation and maintains the same orientation
 - `output`
   - final coordinates and orientation of the robot e.g. `1 1 E`
   - followed by `LOST` if a robot falls "off" the edge of the grid e.g. `3 3 N LOST`
+
+## Identified types
+
+### Coordinate
+
+```ts
+interface Coordinate {
+  x: number
+  y: number
+}
+```
+
+### Position
+
+```ts
+type North = 'N'
+type South = 'S'
+type East = 'E'
+type West = 'W'
+
+type Orientation = North | South | East | West
+
+interface Position extends Coordinate {
+  orientation: Orientation
+}
+```
+
+### Grid
+
+- represented by its lower left and upper right coordinates
+- has coordinates which robots should ignore to move onto
+
+```ts
+interface Grid = {
+  lowerLeft: Coordinate
+  upperRight: Coordinate
+  // if robot is in an ignored position with a specific orientation
+  // then any subsequent 'F' instruction should be skipped
+  positionsToIgnore: Position[]
+}
+```
+
+### Robot instructions
+
+```ts
+type Left = 'L'
+type Right = 'R'
+type Forward = 'F'
+type Instruction = Left | Right | Forward
+```
+
+### Robot
+
+A robot:
+
+- can be created providing a grid to move around on and a landing position
+- can receive instructions to process and execute
+- provides access to current position
+- can tell if completed all instructions
+- can tell if lost
+
+```ts
+abstract class Robot {
+  readonly grid: Grid
+  private position: Position
+  private instructions: Instruction[]
+  private isOnGrid: boolean
+
+  constructor(grid: Grid, landAt: Position)
+
+  // processes instructions and moves robot
+  // skips 'Forward' instructions in ignored positions to avoid falling off the grid
+  // stops execution and marks position when robot moves "off" the grid
+  execute(instructions: Instruction[]): Robot
+
+  // returns the current position of the robot e.g. `1 1 E`
+  get currentPosition(): string
+  // returns `true` if all received instructions have been completed
+  get hasCompletedAllInstructions(): boolean
+  // returns `true` if the robot moved "off" the grid
+  get isLost(): boolean
+}
+```
+
+### EarthHQ
+
+Earth HQ sends a set of instructions to Mars HQ.
+
+```ts
+abstract class EarthHQ {
+  constructor(marsHQ: MarsHQ) {}
+
+  abstract send(instructionSet: string): void
+}
+```
+
+### MarsHQ
+
+Mars HQ:
+
+- receives a set of instructions from Earth HQ
+- processes instruction set
+- lands robots on Mars to specific positions and instructs them to move around
+
+```ts
+abstract class MarsHQ {
+  abstract receiveAndProcess(instructionSet: string): void
+}
+```
