@@ -4,11 +4,11 @@ export interface Coordinate {
 }
 
 const North = 'N';
+const West = 'W';
 const South = 'S';
 const East = 'E';
-const West = 'W';
 
-const orientations = [North, South, East, West] as const;
+export const orientations = [North, West, South, East] as const;
 
 export type Orientation = typeof orientations[number];
 
@@ -23,3 +23,11 @@ export interface Grid {
   // then any subsequent 'F' instruction should be skipped
   positionsToIgnore?: Position[];
 }
+
+export const Left = 'L';
+export const Right = 'R';
+export const Forward = 'F';
+
+const instructions = [Left, Right, Forward] as const;
+
+export type Instruction = typeof instructions[number];
