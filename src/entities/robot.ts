@@ -12,7 +12,7 @@ class Robot {
     this.getUpdatedPosition = commandExecutor;
   }
 
-  process(instructions: Instruction[]) {
+  private process(instructions: Instruction[]) {
     this.instructions = instructions;
 
     while (this.instructions.length > 0) {
@@ -30,7 +30,6 @@ class Robot {
     }
   }
 
-  // processes instructions and moves robot
   execute(instructions: Instruction[]): Robot {
     if (this.isLost) {
       return this;
@@ -41,7 +40,6 @@ class Robot {
     return this;
   }
 
-  // returns the current position of the robot e.g. `1 1 E`
   get currentPosition(): string {
     const { x, y, orientation } = this.position;
     const lost = this.isOffGrid ? ' LOST' : '';
