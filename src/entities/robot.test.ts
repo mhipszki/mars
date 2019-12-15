@@ -1,9 +1,14 @@
 import Robot from './robot';
-import { Grid, Position, Left, Right, Forward } from './types';
+import { Grid, Position, Left, Right, Forward, East } from './types';
 
-const grid = ([x0, y0]: number[], [x1, y1]: number[]): Grid => ({
+const grid = (
+  [x0, y0]: number[],
+  [x1, y1]: number[],
+  positionsToIgnore?: Position[]
+): Grid => ({
   lowerLeft: { x: x0, y: y0 },
   upperRight: { x: x1, y: y1 },
+  positionsToIgnore,
 });
 
 const landAt = (x, y, orientation): Position => ({ x, y, orientation });
@@ -59,4 +64,15 @@ test('can follow a sequence of instructions', () => {
 
   robot.execute([Forward, Left, Forward, Left, Forward, Left, Forward]);
   expect(robot.currentPosition).toEqual('1 1 E');
+});
+
+test('does not move forward from positions with ignored orientation', () => {
+  const positionsToIgnore: Position[] = [{ x: 2, y: 1, orientation: East }];
+  const robot = new Robot(
+    grid([0, 0], [5, 5], positionsToIgnore),
+    landAt(1, 1, 'E')
+  );
+
+  robot.execute([Forward, Forward]);
+  expect(robot.currentPosition).toEqual('2 1 E');
 });

@@ -12,6 +12,23 @@ import {
   East,
 } from './types';
 
+const calculateNextPositionFrom = ({
+  x,
+  y,
+  orientation,
+}: Position): Position => {
+  switch (orientation) {
+    case North:
+      return { x, y: y + 1, orientation };
+    case West:
+      return { x: x - 1, y, orientation };
+    case South:
+      return { x, y: y - 1, orientation };
+    case East:
+      return { x: x + 1, y, orientation };
+  }
+};
+
 class Robot {
   readonly grid: Grid;
   private position: Position;
@@ -34,21 +51,20 @@ class Robot {
     this.position.orientation = orientations.slice(previous)[0];
   }
 
+  shouldNotMoveForwardFrom(position: Position) {
+    return (this.grid.positionsToIgnore || []).some(
+      ({ x, y, orientation }) =>
+        position.x === x &&
+        position.y === y &&
+        position.orientation === orientation
+    );
+  }
+
   moveForward() {
-    switch (this.position.orientation) {
-      case North:
-        this.position.y++;
-        break;
-      case West:
-        this.position.x--;
-        break;
-      case South:
-        this.position.y--;
-        break;
-      case East:
-        this.position.x++;
-        break;
+    if (this.shouldNotMoveForwardFrom(this.position)) {
+      return;
     }
+    this.position = calculateNextPositionFrom(this.position);
   }
 
   run(instruction: Instruction) {
