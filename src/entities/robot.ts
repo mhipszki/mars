@@ -1,33 +1,5 @@
-import {
-  Grid,
-  Position,
-  Instruction,
-  orientations,
-  Left,
-  Right,
-  Forward,
-  North,
-  West,
-  South,
-  East,
-} from './types';
-
-const calculateNextPositionFrom = ({
-  x,
-  y,
-  orientation,
-}: Position): Position => {
-  switch (orientation) {
-    case North:
-      return { x, y: y + 1, orientation };
-    case West:
-      return { x: x - 1, y, orientation };
-    case South:
-      return { x, y: y - 1, orientation };
-    case East:
-      return { x: x + 1, y, orientation };
-  }
-};
+import { Grid, Position, Instruction, Left, Right, Forward } from './types';
+import { turnLeftAt, turnRightAt, moveForwardFrom } from './robotCommands';
 
 class Robot {
   readonly grid: Grid;
@@ -39,43 +11,18 @@ class Robot {
     this.position = landAt;
   }
 
-  turnLeft() {
-    const index = orientations.indexOf(this.position.orientation);
-    const next = (index + 1) % orientations.length;
-    this.position.orientation = orientations[next];
-  }
-
-  turnRight() {
-    const index = orientations.indexOf(this.position.orientation);
-    const previous = index - 1;
-    this.position.orientation = orientations.slice(previous)[0];
-  }
-
-  shouldNotMoveForwardFrom(position: Position) {
-    return (this.grid.positionsToIgnore || []).some(
-      ({ x, y, orientation }) =>
-        position.x === x &&
-        position.y === y &&
-        position.orientation === orientation
-    );
-  }
-
-  moveForward() {
-    if (this.shouldNotMoveForwardFrom(this.position)) {
-      return;
-    }
-    this.position = calculateNextPositionFrom(this.position);
-  }
-
   run(instruction: Instruction) {
     if (instruction === Left) {
-      this.turnLeft();
+      this.position = turnLeftAt(this.position);
     }
     if (instruction === Right) {
-      this.turnRight();
+      this.position = turnRightAt(this.position);
     }
     if (instruction === Forward) {
-      this.moveForward();
+      this.position = moveForwardFrom(
+        this.position,
+        this.grid.positionsToIgnore
+      );
     }
   }
 
