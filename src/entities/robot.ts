@@ -1,36 +1,14 @@
-import { Grid, Position, Instruction, Left, Right, Forward } from './types';
-import { turnLeftAt, turnRightAt, moveForwardFrom } from './robotCommands';
+import { Position, Instruction } from './types';
+import { CommandExecutor } from './robotCommands';
 
 class Robot {
-  readonly grid: Grid;
+  readonly getUpdatedPosition: CommandExecutor;
   private position: Position;
   private instructions: Instruction[] = [];
 
-  constructor(grid: Grid, landAt: Position) {
-    this.grid = grid;
+  constructor(landAt: Position, commandExecutor: CommandExecutor) {
     this.position = landAt;
-  }
-
-  run(instruction: Instruction) {
-    if (instruction === Left) {
-      this.position = turnLeftAt(this.position);
-    }
-    if (instruction === Right) {
-      this.position = turnRightAt(this.position);
-    }
-    if (instruction === Forward) {
-      this.position = moveForwardFrom(
-        this.position,
-        this.grid.positionsToIgnore
-      );
-    }
-  }
-
-  followInstructions() {
-    while (this.instructions.length > 0) {
-      const nextInstruction = this.instructions.shift();
-      this.run(nextInstruction);
-    }
+    this.getUpdatedPosition = commandExecutor;
   }
 
   // processes instructions and moves robot
@@ -38,7 +16,10 @@ class Robot {
   // stops execution and marks position when robot moves "off" the grid
   execute(instructions: Instruction[]): Robot {
     this.instructions = instructions;
-    this.followInstructions();
+    while (this.instructions.length > 0) {
+      const nextInstruction = this.instructions.shift();
+      this.position = this.getUpdatedPosition(nextInstruction, this.position);
+    }
     return this;
   }
 
