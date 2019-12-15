@@ -6,19 +6,19 @@
 
 ## Captured requirements
 
-- robots move on a __rectangular grid__
-- robot __position__: grid coordinate `(x, y)` + orientation (`N`,`S`,`E`,`W`)
+- robots move on a **rectangular grid**
+- robot **position**: grid coordinate `(x, y)` + orientation (`N`,`S`,`E`,`W`)
   - e.g. `North` corresponds to the direction from grid point `(x, y)` to grid point `(x, y + 1)`
-  - coordinates are __zero based__
-- robot __instruction__: sequence of the following characters:
+  - coordinates are **zero based**
+- robot **instruction**: sequence of the following characters:
   - `L`: the robot turns left 90 degrees and remains on the current grid point
   - `R`: the robot turns right 90 degrees and remains on the current grid point
   - `F`: the robot moves forward one grid point in the direction of the current
-orientation and maintains the same orientation
-  - __additional command types__ may be required in the future
+    orientation and maintains the same orientation
+  - **additional command types** may be required in the future
 - a robot moving "off" the grid is lost forever
-  - last positions on grid are marked
-  - other robots will ignore instructions to move "off" the grid at those positions
+  - lost positions on grid are marked
+  - other robots will ignore instructions to avoid moving "off" the grid at those positions
 - `input`
   - `1st line`: upper-right coordinates, representing the size of the grid e.g. `5 3`, whitespace separated
   - `2nd line`: robot position and orientation e.g. `1 1 E`, whitespace separated
@@ -36,23 +36,23 @@ orientation and maintains the same orientation
 
 ```ts
 interface Coordinate {
-  x: number
-  y: number
+  x: number;
+  y: number;
 }
 ```
 
 ### Position
 
 ```ts
-type North = 'N'
-type South = 'S'
-type East = 'E'
-type West = 'W'
+type North = 'N';
+type South = 'S';
+type East = 'E';
+type West = 'W';
 
-type Orientation = North | South | East | West
+type Orientation = North | South | East | West;
 
 interface Position extends Coordinate {
-  orientation: Orientation
+  orientation: Orientation;
 }
 ```
 
@@ -62,54 +62,51 @@ interface Position extends Coordinate {
 - has coordinates which robots should ignore to move onto
 
 ```ts
-interface Grid = {
-  lowerLeft: Coordinate
-  upperRight: Coordinate
+interface Grid {
+  lowerLeft: Coordinate;
+  upperRight: Coordinate;
   // if robot is in an ignored position with a specific orientation
   // then any subsequent 'F' instruction should be skipped
-  positionsToIgnore: Position[]
+  positionsToIgnore: Position[];
 }
 ```
 
 ### Robot instructions
 
 ```ts
-type Left = 'L'
-type Right = 'R'
-type Forward = 'F'
-type Instruction = Left | Right | Forward
+type Left = 'L';
+type Right = 'R';
+type Forward = 'F';
+type Instruction = Left | Right | Forward;
 ```
 
 ### Robot
 
 A robot:
 
-- can be created providing a grid to move around on and a landing position
-- can receive instructions to process and execute
-- provides access to current position
-- can tell if completed all instructions
+- can be created providing a landing position and a command executor
+- can receive instructions to process and execute via command executor
+- provides access to its current position
 - can tell if lost
 
 ```ts
 abstract class Robot {
-  readonly grid: Grid
-  private position: Position
-  private instructions: Instruction[]
-  private isOnGrid: boolean
+  readonly grid: Grid;
+  private position: Position;
+  private instructions: Instruction[];
+  private isOffGrid: boolean;
 
-  constructor(grid: Grid, landAt: Position)
+  constructor(grid: Grid, landAt: Position);
 
   // processes instructions and moves robot
   // skips 'Forward' instructions in ignored positions to avoid falling off the grid
   // stops execution and marks position when robot moves "off" the grid
-  execute(instructions: Instruction[]): Robot
+  execute(instructions: Instruction[]): Robot;
 
   // returns the current position of the robot e.g. `1 1 E`
-  get currentPosition(): string
-  // returns `true` if all received instructions have been completed
-  get hasCompletedAllInstructions(): boolean
+  get currentPosition(): string;
   // returns `true` if the robot moved "off" the grid
-  get isLost(): boolean
+  get isLost(): boolean;
 }
 ```
 
@@ -121,7 +118,7 @@ Earth HQ sends a set of instructions to Mars HQ.
 abstract class EarthHQ {
   constructor(marsHQ: MarsHQ) {}
 
-  abstract send(instructionSet: string): void
+  abstract sendToMars(instructionSet: string): void;
 }
 ```
 
@@ -135,6 +132,6 @@ Mars HQ:
 
 ```ts
 abstract class MarsHQ {
-  abstract receiveAndProcess(instructionSet: string): void
+  abstract receiveAndProcess(instructionSet: string): void;
 }
 ```
