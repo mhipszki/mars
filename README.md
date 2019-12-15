@@ -4,6 +4,50 @@
 
 > Write a program that determines each sequence of robot positions and reports the final position of the robot.
 
+## The solution
+
+- was written in `TypeScript` in a test-driven manner
+- focuses on the extendability of robot instructions besides implementing all requirements
+- does not have UI but has a simple CLI script for demonstration
+- Create React App was used to scaffold the project
+
+> Earth HQ sends input to Marsh HQ to process which will configure and deploy robots to Mars, then returns their final positions to Earth HQ.
+
+Possible improvements:
+
+- thorough input validation with feedback on errors e.g. invalid robot landing position etc.
+- demonstrate extendability via passing in different command executor
+- some funny UI to see the robots executing instructions on a grid and marking positions where falling off :)
+
+First install dependencies, please run:
+
+```
+yarn
+```
+
+To demonstrate the project please run:
+
+```
+yarn deploy-robots
+```
+
+which will pass the _sample instruction string_ (input) from Earth HQ to Marsh HQ to be processed and executed.
+
+The response with the _expected robot positions_ (output) will be logged to the console:
+
+```
+Mars HQ has responded with robot locations:
+1 1 E
+3 3 N LOST
+2 3 S
+```
+
+To run all unit tests please run:
+
+```
+yarn test
+```
+
 ## Captured requirements
 
 - robots move on a **rectangular grid**
@@ -91,18 +135,17 @@ A robot:
 
 ```ts
 abstract class Robot {
-  readonly grid: Grid;
+  readonly getUpdatedPosition: CommandExecutor;
   private position: Position;
   private instructions: Instruction[];
   private isOffGrid: boolean;
 
-  constructor(grid: Grid, landAt: Position);
+  constructor(landAt: Position, commandExecutor: CommandExecutor);
 
   // processes instructions and moves robot
   // skips 'Forward' instructions in ignored positions to avoid falling off the grid
   // stops execution and marks position when robot moves "off" the grid
   execute(instructions: Instruction[]): Robot;
-
   // returns the current position of the robot e.g. `1 1 E`
   get currentPosition(): string;
   // returns `true` if the robot moved "off" the grid
@@ -118,7 +161,7 @@ Earth HQ sends a set of instructions to Mars HQ.
 abstract class EarthHQ {
   constructor(marsHQ: MarsHQ) {}
 
-  abstract sendToMars(instructionSet: string): void;
+  abstract sendToMars(input: string): void;
 }
 ```
 
@@ -132,6 +175,6 @@ Mars HQ:
 
 ```ts
 abstract class MarsHQ {
-  abstract receiveAndProcess(instructionSet: string): void;
+  abstract receiveAndProcess(input: string): void;
 }
 ```
