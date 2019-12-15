@@ -5,6 +5,11 @@ import {
   orientations,
   Left,
   Right,
+  Forward,
+  North,
+  West,
+  South,
+  East,
 } from './types';
 
 class Robot {
@@ -26,6 +31,22 @@ class Robot {
     if (instruction === Right) {
       const previous = index - 1;
       this.position.orientation = orientations.slice(previous)[0];
+    }
+    if (instruction === Forward) {
+      switch (this.position.orientation) {
+        case North:
+          this.position.y++;
+          break;
+        case West:
+          this.position.x--;
+          break;
+        case South:
+          this.position.y--;
+          break;
+        case East:
+          this.position.x++;
+          break;
+      }
     }
   }
 

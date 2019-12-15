@@ -3,10 +3,10 @@ export interface Coordinate {
   y: number;
 }
 
-const North = 'N';
-const West = 'W';
-const South = 'S';
-const East = 'E';
+export const North = 'N';
+export const West = 'W';
+export const South = 'S';
+export const East = 'E';
 
 export const orientations = [North, West, South, East] as const;
 
