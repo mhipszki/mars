@@ -1,17 +1,6 @@
 import process from './instructionProcessor';
+import input from './instructionMessageExample';
 import { East, Right, Forward, North, Left, West } from './types';
-
-const input = `
-5 3
-1 1 E
-RFRFRFRF
-
-3 2 N
-FRRFLLFFRRFLL
-
-0 3 W
-LLFFFLFLFL
-`;
 
 test('extracts grid dimensions from input', () => {
   expect(process(input)).toMatchObject({
