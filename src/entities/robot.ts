@@ -22,31 +22,44 @@ class Robot {
     this.position = landAt;
   }
 
-  run(instruction: Instruction) {
+  turnLeft() {
     const index = orientations.indexOf(this.position.orientation);
+    const next = (index + 1) % orientations.length;
+    this.position.orientation = orientations[next];
+  }
+
+  turnRight() {
+    const index = orientations.indexOf(this.position.orientation);
+    const previous = index - 1;
+    this.position.orientation = orientations.slice(previous)[0];
+  }
+
+  moveForward() {
+    switch (this.position.orientation) {
+      case North:
+        this.position.y++;
+        break;
+      case West:
+        this.position.x--;
+        break;
+      case South:
+        this.position.y--;
+        break;
+      case East:
+        this.position.x++;
+        break;
+    }
+  }
+
+  run(instruction: Instruction) {
     if (instruction === Left) {
-      const next = (index + 1) % orientations.length;
-      this.position.orientation = orientations[next];
+      this.turnLeft();
     }
     if (instruction === Right) {
-      const previous = index - 1;
-      this.position.orientation = orientations.slice(previous)[0];
+      this.turnRight();
     }
     if (instruction === Forward) {
-      switch (this.position.orientation) {
-        case North:
-          this.position.y++;
-          break;
-        case West:
-          this.position.x--;
-          break;
-        case South:
-          this.position.y--;
-          break;
-        case East:
-          this.position.x++;
-          break;
-      }
+      this.moveForward();
     }
   }
 
