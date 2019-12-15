@@ -29,14 +29,13 @@ const turnRightAt = (position: Position): Position => {
 const isIgnored = (
   position: Position,
   positionsToIgnore: Position[]
-): boolean => {
-  return (positionsToIgnore || []).some(
+): boolean =>
+  positionsToIgnore.some(
     ({ x, y, orientation }) =>
       position.x === x &&
       position.y === y &&
       position.orientation === orientation
   );
-};
 
 const calculateNextPositionFrom = ({
   x,
@@ -55,14 +54,26 @@ const calculateNextPositionFrom = ({
   }
 };
 
-const moveForwardFrom = (
-  position: Position,
-  positionsToIgnore: Position[]
-): Position => {
-  if (isIgnored(position, positionsToIgnore)) {
+const isPositionOffGrid = (position: Position, grid: Grid): boolean =>
+  position.x < grid.lowerLeft.x ||
+  position.x > grid.upperRight.x ||
+  position.y < grid.lowerLeft.y ||
+  position.y > grid.upperRight.y;
+
+const markPositionAsIgnored = (position: Position, grid: Grid) => {
+  grid.positionsToIgnore.push(position);
+};
+
+const moveForwardFrom = (position: Position, grid: Grid): Position => {
+  if (isIgnored(position, grid.positionsToIgnore)) {
     return position;
   }
-  return calculateNextPositionFrom(position);
+  const nextPosition = calculateNextPositionFrom(position);
+  const isOffGrid = isPositionOffGrid(nextPosition, grid);
+  if (isOffGrid) {
+    markPositionAsIgnored(position, grid);
+  }
+  return { ...nextPosition, isOffGrid };
 };
 
 export type CommandExecutor = (
@@ -81,6 +92,6 @@ export const createExecutor = (grid: Grid): CommandExecutor => (
     return turnRightAt(position);
   }
   if (instruction === Forward) {
-    return moveForwardFrom(position, grid.positionsToIgnore);
+    return moveForwardFrom(position, grid);
   }
 };

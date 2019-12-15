@@ -1,11 +1,11 @@
 import Robot from './robot';
-import { Grid, Position, Left, Right, Forward, East } from './types';
+import { Grid, Position, Left, Right, Forward, East, West } from './types';
 import { createExecutor } from './robotCommands';
 
-const grid = (
-  [x0, y0]: number[],
-  [x1, y1]: number[],
-  positionsToIgnore?: Position[]
+const createGrid = (
+  [x0, y0]: number[] = [0, 0],
+  [x1, y1]: number[] = [5, 5],
+  positionsToIgnore: Position[] = []
 ): Grid => ({
   lowerLeft: { x: x0, y: y0 },
   upperRight: { x: x1, y: y1 },
@@ -14,8 +14,7 @@ const grid = (
 
 const landAt = (x, y, orientation): Position => ({ x, y, orientation });
 
-const commandExecutor = (positionsToIgnore?: Position[]) =>
-  createExecutor(grid([0, 0], [5, 5], positionsToIgnore));
+const commandExecutor = (grid: Grid = createGrid()) => createExecutor(grid);
 
 test('is created with landing position and command executor', () => {
   const robot = new Robot(landAt(1, 1, 'N'), commandExecutor());
@@ -72,11 +71,27 @@ test('can follow a sequence of instructions', () => {
 
 test('does not move forward from positions with ignored orientation', () => {
   const positionsToIgnore: Position[] = [{ x: 2, y: 1, orientation: East }];
-  const robot = new Robot(
-    landAt(1, 1, 'E'),
-    commandExecutor(positionsToIgnore)
-  );
+  const grid = createGrid([0, 0], [5, 5], positionsToIgnore);
+  const robot = new Robot(landAt(1, 1, 'E'), commandExecutor(grid));
 
   robot.execute([Forward, Forward]);
   expect(robot.currentPosition).toEqual('2 1 E');
+});
+
+test('marks and reports the position where it fell "off" the grid', () => {
+  const grid = createGrid([0, 0], [5, 5]);
+  const robot = new Robot(landAt(1, 1, 'W'), commandExecutor(grid));
+
+  robot.execute([Forward, Forward]);
+
+  expect(grid.positionsToIgnore).toContainEqual(
+    expect.objectContaining({
+      x: 0,
+      y: 1,
+      orientation: West,
+    })
+  );
+
+  expect(robot.isLost).toBe(true);
+  expect(robot.currentPosition).toEqual('0 1 W LOST');
 });

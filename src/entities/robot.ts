@@ -5,6 +5,7 @@ class Robot {
   readonly getUpdatedPosition: CommandExecutor;
   private position: Position;
   private instructions: Instruction[] = [];
+  private isOffGrid: boolean = false;
 
   constructor(landAt: Position, commandExecutor: CommandExecutor) {
     this.position = landAt;
@@ -18,7 +19,15 @@ class Robot {
     this.instructions = instructions;
     while (this.instructions.length > 0) {
       const nextInstruction = this.instructions.shift();
-      this.position = this.getUpdatedPosition(nextInstruction, this.position);
+      const updatedPosition = this.getUpdatedPosition(
+        nextInstruction,
+        this.position
+      );
+      if (updatedPosition.isOffGrid) {
+        this.isOffGrid = true;
+      } else {
+        this.position = updatedPosition;
+      }
     }
     return this;
   }
@@ -26,7 +35,12 @@ class Robot {
   // returns the current position of the robot e.g. `1 1 E`
   get currentPosition(): string {
     const { x, y, orientation } = this.position;
-    return `${x} ${y} ${orientation}`;
+    const lost = this.isOffGrid ? ' LOST' : '';
+    return `${x} ${y} ${orientation}${lost}`;
+  }
+
+  get isLost(): boolean {
+    return this.isOffGrid;
   }
 }
 

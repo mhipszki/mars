@@ -14,14 +14,13 @@ export type Orientation = typeof orientations[number];
 
 export interface Position extends Coordinate {
   orientation: Orientation;
+  isOffGrid?: boolean;
 }
 
 export interface Grid {
   lowerLeft: Coordinate;
   upperRight: Coordinate;
-  // if robot is in an ignored position with a specific orientation
-  // then any subsequent 'F' instruction should be skipped
-  positionsToIgnore?: Position[];
+  positionsToIgnore: Position[];
 }
 
 export const Left = 'L';
