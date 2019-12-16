@@ -74,7 +74,7 @@ yarn test
   - final coordinates and orientation of the robot e.g. `1 1 E`
   - followed by `LOST` if a robot falls "off" the edge of the grid e.g. `3 3 N LOST`
 
-## Identified types
+## Identified types
 
 ### Coordinate
 
@@ -85,7 +85,7 @@ interface Coordinate {
 }
 ```
 
-### Position
+### Position
 
 ```ts
 type North = 'N';
@@ -124,7 +124,7 @@ type Forward = 'F';
 type Instruction = Left | Right | Forward;
 ```
 
-### Robot
+### Robot
 
 A robot:
 
